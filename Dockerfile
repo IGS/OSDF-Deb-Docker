@@ -1,6 +1,6 @@
 # The Basics
-FROM ubuntu:trusty
-MAINTAINER Victor Felix <victor73@github.com>
+FROM ubuntu:xenial
+MAINTAINER Victor <victor73@github.com>
 
 RUN mkdir /build
 
@@ -13,8 +13,13 @@ RUN chown -R osdf.osdf /build
 RUN apt-get update && \
     apt-get install -y software-properties-common git dh-make \
     dh-systemd build-essential devscripts fakeroot debootstrap \
-    pbuilder subversion openjdk-7-jre ant
+    pbuilder
+
+RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+
+RUN apt-get install -y nodejs && \
+    npm install -g gulp
 
 USER osdf
 
-CMD git clone http://github.com/IGS/OSDF /build/osdf && cd /build/osdf && git pull && /usr/bin/ant clean deb && cp dist/* /export/
+CMD git clone http://github.com/IGS/OSDF /build/osdf && cd /build/osdf && git pull && npm install && gulp dist && cp dist/* /export/
